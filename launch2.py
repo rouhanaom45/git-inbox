@@ -10,7 +10,7 @@ verif_button_image = 'pass1_button.png'
 verif1_button_image = 'macro1_button.png'
 
 # Maximum number of detection attempts
-max_attempts = 20
+max_attempts = 15
 
 # Check if both image files exist
 if not os.path.isfile(verif_button_image):
