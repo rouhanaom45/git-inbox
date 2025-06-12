@@ -9,7 +9,7 @@ button_images = [
     'cap-press_button.png'
 ]
 
-max_attempts = 20
+max_attempts = 12
 
 for image in button_images:
     if not os.path.isfile(image):
