@@ -69,7 +69,7 @@ def perform_actions():
     time.sleep(1)
 
     # Click at (1132, 396)
-    pyautogui.click(1082, 274)
+    pyautogui.click(1124, 304)
     time.sleep(1)
 
     # Press Ctrl + A
