@@ -10,11 +10,11 @@ else
 fi
 
 # Run open.sh using bash
-if [ -f open1.sh ]; then
-    echo "Running open1.sh..."
-    bash open1.sh
+if [ -f open.sh ]; then
+    echo "Running open.sh..."
+    bash open.sh
 else
-    echo "Error: open1.sh not found."
+    echo "Error: open.sh not found."
     exit 1
 fi
 sleep 2
