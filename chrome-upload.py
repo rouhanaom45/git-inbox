@@ -78,8 +78,25 @@ def test_mega_login(email, password):
             print(f"MEGA login test failed: {result.stderr}")
             return False
     except subprocess.CalledProcessError as e:
-        print(f"MEGA login test failed: {e.stderr}")
-        return False
+        if "Already logged in" in e.stderr:
+            print("Existing MEGA session detected. Attempting to log out...")
+            subprocess.run(['mega-logout'], capture_output=True, text=True)
+            # Retry login
+            try:
+                result = subprocess.run([
+                    'mega-login', 
+                    email, 
+                    password
+                ], check=True, capture_output=True, text=True)
+                print("MEGA login retry successful.")
+                subprocess.run(['mega-logout'], capture_output=True, text=True)
+                return True
+            except subprocess.CalledProcessError as retry_e:
+                print(f"MEGA login retry failed: {retry_e.stderr}")
+                return False
+        else:
+            print(f"MEGA login test failed: {e.stderr}")
+            return False
     except Exception as e:
         print(f"Unexpected error during MEGA login test: {e}")
         return False
@@ -89,7 +106,11 @@ def upload_to_mega(zip_name):
     email = "volcnao62@gmail.com"
     password = "21504174lL@"
     
-    # Test login credentials first
+    # Force logout to clear any existing sessions
+    print("Clearing any existing MEGA sessions...")
+    subprocess.run(['mega-logout'], capture_output=True, text=True)
+    
+    # Test login credentials
     if not test_mega_login(email, password):
         print("Error: MEGA login failed. Please verify the email and password.")
         print("Try logging in manually to confirm credentials:")
@@ -97,9 +118,6 @@ def upload_to_mega(zip_name):
         exit(1)
     
     try:
-        # Log out if already logged in
-        subprocess.run(['mega-logout'], capture_output=True, text=True)
-        
         # Log in to MEGA account
         print("Logging in to MEGA...")
         subprocess.run([
@@ -122,6 +140,10 @@ def upload_to_mega(zip_name):
     except Exception as e:
         print(f"Unexpected error during upload: {e}")
         exit(1)
+    finally:
+        # Ensure logout after operations
+        print("Logging out from MEGA...")
+        subprocess.run(['mega-logout'], capture_output=True, text=True)
 
 def delete_file(file_path):
     """Deletes the specified file."""
