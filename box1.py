@@ -43,7 +43,11 @@ time.sleep(1)
 random_click((79, 147), (315, 427))
 time.sleep(random.uniform(0.5, 1.0))
 pyautogui.click(1040, 564)
+time.sleep(2.5)
+ubprocess.run(["python", "oki.py"])
 time.sleep(1)
+random_click((79, 147), (315, 427))
+time.sleep(random.uniform(0.5, 1.0))
 
 for _ in range(random.randint(6, 8)):
     pyautogui.press("up")
