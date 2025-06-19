@@ -102,7 +102,7 @@ time.sleep(random.uniform(0.5, 1))
 # Perform a random click within the specified area
 random_click_within_rect((437, 481), (896, 497))
 random_wait(6.5, 7.5)
-pyautogui.click(1136, 369)
+pyautogui.click(1228, 370)
 time.sleep(1)
 pyautogui.hotkey('ctrl', 'shift', 'tab')
 time.sleep(1)
