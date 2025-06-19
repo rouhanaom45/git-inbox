@@ -3,7 +3,6 @@
 
 scripts=(
   "google.py"
-  "capcha.py"
   "box1.py"
   "proton1.py"
   "confirm0.py"
