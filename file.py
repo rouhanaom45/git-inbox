@@ -1,30 +1,51 @@
 import pyautogui
 import time
+import os
 import subprocess
 
-def detect_web_button(script_name):
-    """Run an external script to detect the web button and keep trying until successful."""
-    while True:
-        # Start the external detection script
-        process = subprocess.Popen(['python3', script_name])
-        process.wait()  # Wait for it to finish
+time.sleep(1.5)
 
-        if process.returncode == 0:  # Success code indicates the button was found
-            print(f"Web button detected and clicked by {script_name}. Proceeding with tasks...")
-            return  # Exit the loop and proceed to next tasks
-        else:
-            print(f"Web button not detected by {script_name}. Retrying...")
-            time.sleep(2)
+button_images = [
+    'file_button.png'
+]
 
-def perform_additional_tasks():
-    """Define tasks to perform after the web button is detected."""
-    print("Performing additional tasks...")
+max_attempts = 5000
+
+for image in button_images:
+    if not os.path.isfile(image):
+        print(f"Error: The image file '{image}' does not exist.")
+
+for attempt in range(max_attempts):
+    print(f"Attempt {attempt + 1} of {max_attempts}: Attempting to detect verification buttons...")
+    time.sleep(2)
+
+    for image in button_images:
+        try:
+            print(f"Trying to detect: {image}")
+            location = pyautogui.locateOnScreen(image, confidence=0.8)
+        except Exception as e:
+            print(f"Error while detecting '{image}': {e}")
+            location = None
+
+        if location:
+            print(f"'{image}' detected at {location}, clicking...")
+            time.sleep(1)
+            pyautogui.click(location)
+            exit()
+
+    print("No buttons detected in this attempt. Pressing Down Arrow key to continue...")
     time.sleep(1)
-    print("All tasks completed.")
+    pyautogui.hotkey('ctrl', 't')
+    time.sleep(1)
+    pyautogui.write('www.github.com')
+    time.sleep(0.5)
+    pyautogui.press('enter')
+    time.sleep(2.5)
+    pyautogui.hotkey('ctrl', 'shift', 'tab')
+    time.sleep(1.3)
+    pyautogui.hotkey('ctrl', 'w')
+    time.sleep(1.2)
+    subprocess.run(["python3", "replay1.py"])
+    time.sleep(1)
 
-if __name__ == "__main__":
-    # Step 1: Detect the web button via the detection script
-    detect_web_button('search.py')
-
-    # Step 2: Perform additional tasks after the web button is detected
-    perform_additional_tasks()
+print("Maximum detection attempts reached. Exiting...")
