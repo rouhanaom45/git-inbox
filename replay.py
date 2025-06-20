@@ -7,72 +7,98 @@ import subprocess
 
 # Enable fail-safe to prevent runaway scripts
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 0.05  # Small base pause for all actions to avoid overloading
+pyautogui.PAUSE = 0.03  # Slightly reduced base pause for smoother actions
 
 # Initial delay to allow user to prepare
 time.sleep(3)
 
 def random_wait(min_time, max_time):
-    """Generate a random wait time with a slight bias towards natural human pauses."""
+    """Generate a random wait time with natural human variability."""
     base_time = random.uniform(min_time, max_time)
-    # Occasionally add a longer pause to simulate human hesitation
-    if random.random() < 0.1:  # 10% chance for a longer pause
-        base_time += random.uniform(0.5, 1.5)
+    # Add occasional longer pauses to simulate distraction or hesitation
+    if random.random() < 0.15:  # 15% chance for a longer pause
+        base_time += random.uniform(0.7, 2.0)
+    # Rarely add a very brief pause to mimic quick human adjustments
+    elif random.random() < 0.1:
+        base_time *= random.uniform(0.5, 0.8)
     time.sleep(base_time)
 
 def smooth_mouse_move(target_x, target_y, duration=0.5):
-    """Move mouse to target with smooth, human-like path using Bezier-like movement."""
+    """Move mouse with human-like path using Bezier curves and micro-jitters."""
     start_x, start_y = pyautogui.position()
-    steps = int(duration * 60)  # Assuming 60 FPS for smooth movement
+    steps = int(duration * 60)  # 60 FPS for smooth movement
+    # Introduce slight curve in path to mimic natural hand movement
+    control_x = start_x + (target_x - start_x) * random.uniform(0.3, 0.7) + random.randint(-20, 20)
+    control_y = start_y + (target_y - start_y) * random.uniform(0.3, 0.7) + random.randint(-20, 20)
+    
     for i in range(steps + 1):
         t = i / steps
-        # Add slight randomness to simulate natural hand movement
-        offset_x = random.uniform(-5, 5) if random.random() < 0.3 else 0
-        offset_y = random.uniform(-5, 5) if random.random() < 0.3 else 0
-        # Quadratic Bezier curve for smooth movement
-        x = (1 - t) * start_x + t * target_x + offset_x
-        y = (1 - t) * start_y + t * target_y + offset_y
+        # Quadratic Bezier curve for natural movement
+        x = (1 - t) ** 2 * start_x + 2 * (1 - t) * t * control_x + t ** 2 * target_x
+        y = (1 - t) ** 2 * start_y + 2 * (1 - t) * t * control_y + t ** 2 * target_y
+        # Add micro-jitters to simulate hand tremors
+        x += random.uniform(-3, 3) if random.random() < 0.4 else 0
+        y += random.uniform(-3, 3) if random.random() < 0.4 else 0
         pyautogui.moveTo(x, y, duration=0.016, tween=pyautogui.easeInOutQuad)
-    # Small overshoot and correction to mimic human imprecision
-    if random.random() < 0.2:
-        pyautogui.moveTo(target_x + random.randint(-10, 10), target_y + random.randint(-10, 10))
-        time.sleep(random.uniform(0.05, 0.15))
-        pyautogui.moveTo(target_x, target_y, duration=0.1)
+    
+    # Simulate overshoot and correction for human imprecision
+    if random.random() < 0.25:
+        overshoot_x = target_x + random.randint(-15, 15)
+        overshoot_y = target_y + random.randint(-15, 15)
+        pyautogui.moveTo(overshoot_x, overshoot_y, duration=0.1)
+        time.sleep(random.uniform(0.05, 0.2))
+        pyautogui.moveTo(target_x, target_y, duration=0.15)
 
-def random_human_typing(text):
-    """Simulate human typing with variable delays and occasional mistakes."""
+def random_human_typing(text, is_password=False):
+    """Simulate human typing with realistic delays, pauses, and corrections."""
     for i, char in enumerate(text):
-        # Occasionally pause to simulate thinking
-        if random.random() < 0.05 and i > 0:  # 5% chance to pause mid-typing
-            time.sleep(random.uniform(0.3, 0.8))
-        # Simulate occasional typos (1% chance per character)
-        if random.random() < 0.01:
+        # Context-aware pauses (longer for passwords to mimic caution)
+        if is_password and random.random() < 0.2 and i > 0:
+            time.sleep(random.uniform(0.4, 1.0))  # Hesitation for sensitive input
+        elif random.random() < 0.08 and i > 0:  # Normal hesitation
+            time.sleep(random.uniform(0.3, 0.9))
+        
+        # Simulate occasional typos (more likely for non-passwords)
+        if not is_password and random.random() < 0.015:
             wrong_char = random.choice(string.ascii_letters)
             pyautogui.write(wrong_char)
-            time.sleep(random.uniform(0.1, 0.3))
+            time.sleep(random.uniform(0.1, 0.4))
             pyautogui.press('backspace')
-            time.sleep(random.uniform(0.05, 0.15))
+            time.sleep(random.uniform(0.05, 0.2))
+        
+        # Simulate occasional double key press
+        if random.random() < 0.02:
+            pyautogui.write(char)
+            time.sleep(random.uniform(0.05, 0.1))
+            pyautogui.press('backspace')
+        
         pyautogui.write(char)
-        # Variable typing speed with slight bursts
-        if random.random() < 0.3:  # 30% chance for faster typing burst
-            time.sleep(random.uniform(0.03, 0.1))
+        # Variable typing speed with bursts and slowdowns
+        if random.random() < 0.35:  # 35% chance for faster typing
+            time.sleep(random.uniform(0.02, 0.08))
         else:
-            time.sleep(random.uniform(0.08, 0.25))
+            time.sleep(random.uniform(0.07, 0.3))
 
 def random_click_within_rect(top_left, bottom_right):
-    """Click within a rectangle with human-like mouse movement and hesitation."""
+    """Click within a rectangle with human-like movement and hesitation."""
     x = random.randint(top_left[0], bottom_right[0])
     y = random.randint(top_left[1], bottom_right[1])
-    # Add small offset to avoid perfect center clicks
-    x += random.randint(-5, 5)
-    y += random.randint(-5, 5)
-    smooth_mouse_move(x, y, duration=random.uniform(0.3, 0.7))
-    # Simulate hesitation before click
-    if random.random() < 0.15:  # 15% chance to hesitate
-        time.sleep(random.uniform(0.1, 0.4))
+    # Add slight offset to avoid perfect clicks
+    x += random.randint(-8, 8)
+    y += random.randint(-8, 8)
+    smooth_mouse_move(x, y, duration=random.uniform(0.4, 0.8))
+    
+    # Simulate pre-click hesitation or cursor adjustment
+    if random.random() < 0.2:
+        time.sleep(random.uniform(0.15, 0.5))
+        # Small cursor adjustment to mimic human precision
+        pyautogui.moveRel(random.randint(-5, 5), random.randint(-5, 5), duration=0.1)
+    
     pyautogui.click()
-    # Small post-click delay to mimic human reaction
-    time.sleep(random.uniform(0.05, 0.2))
+    # Post-click drift or pause to mimic human behavior
+    if random.random() < 0.1:
+        pyautogui.moveRel(random.randint(-10, 10), random.randint(-10, 10), duration=0.1)
+    time.sleep(random.uniform(0.05, 0.25))
 
 def generate_random_name():
     """Generate a random name (unchanged from original logic)."""
@@ -96,7 +122,7 @@ press_count = random.randint(14, 15)
 
 for i in range(press_count):
     pyautogui.press('down')
-    time.sleep(random.uniform(0.15, 0.3))  # Slightly adjusted for smoother scrolling
+    time.sleep(random.uniform(0.15, 0.35))  # Varied scrolling speed
 
 random_wait(1, 2)
 random_click_within_rect((238, 151), (569, 161))
@@ -104,7 +130,7 @@ random_wait(0.7, 1.2)
 
 # Write a random name
 random_human_typing(generate_random_name())
-random_wait(0.8, 1.4)
+random_wait(1.2, 1.6)
 
 random_click_within_rect((641, 156), (720, 162))
 random_wait(1, 1.5)
@@ -115,19 +141,19 @@ random_wait(0.5, 1)
 
 # Write a random password
 password = generate_random_password()
-random_human_typing(password)
+random_human_typing(password, is_password=True)
 random_wait(1, 2)
 
 random_click_within_rect((57, 178), (149, 460))
 random_wait(1, 2)
 for _ in range(random.randint(2, 3)):
     pyautogui.press("down")
-    time.sleep(random.uniform(0.1, 0.3))  # Adjusted for smoother scrolling
+    time.sleep(random.uniform(0.1, 0.35))  # Varied scrolling speed
 
 random_click_within_rect((243, 271), (662, 278))
 random_wait(1, 2)
 # Rewrite the same password
-random_human_typing(password)
+random_human_typing(password, is_password=True)
 time.sleep(1)
 
 random_click_within_rect((383, 326), (568, 340))
