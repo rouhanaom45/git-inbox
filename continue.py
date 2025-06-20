@@ -68,35 +68,6 @@ def random_click_in_rectangle(top_left, bottom_right):
         pyautogui.moveRel(random.randint(-10, 10), random.randint(-10, 10), duration=0.1)
     time.sleep(random.uniform(0.05, 0.25))
 
-def type_like_human(text):
-    """Type text with human-like delays, pauses, and corrections."""
-    for i, char in enumerate(text):
-        # Context-aware pauses for clipboard content
-        if random.random() < 0.2 and i > 0:
-            time.sleep(random.uniform(0.4, 1.0))  # Hesitation for pasted content
-        elif random.random() < 0.08 and i > 0:
-            time.sleep(random.uniform(0.3, 0.9))
-        
-        # Simulate typos
-        if random.random() < 0.015:
-            wrong_char = random.choice('abcdefghijklmnopqrstuvwxyz')
-            pyautogui.write(wrong_char)
-            time.sleep(random.uniform(0.1, 0.4))
-            pyautogui.press('backspace')
-            time.sleep(random.uniform(0.05, 0.2))
-        
-        # Simulate double key press
-        if random.random() < 0.02:
-            pyautogui.write(char)
-            time.sleep(random.uniform(0.05, 0.1))
-            pyautogui.press('backspace')
-        
-        pyautogui.write(char)
-        # Variable typing speed
-        if random.random() < 0.35:
-            time.sleep(random.uniform(0.02, 0.08))
-        else:
-            time.sleep(random.uniform(0.07, 0.3))
 
 # Script execution
 smooth_mouse_move(1038, 630, duration=random.uniform(0.4, 0.8))
@@ -123,7 +94,10 @@ pyautogui.click()
 
 random_sleep(1, 2)
 text = pyperclip.paste()
-type_like_human(text)
+for char in text:
+    pyautogui.write(char)
+    time.sleep(random.uniform(0.3, 0.45))
+time.sleep(random.uniform(10, 12))
 random_sleep(10, 12)
 
 time.sleep(1)
