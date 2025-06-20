@@ -51,11 +51,25 @@ def smooth_mouse_move(target_x, target_y, duration=0.5):
         pyautogui.moveTo(target_x, target_y, duration=0.15)
 
 def random_click(x1, y1, x2, y2):
-    """Click within a rectangle with human-like movement and hesitation."""
+    """Click within a rectangle with human-like movement and size-adjusted offset."""
     x = random.randint(x1, x2)
     y = random.randint(y1, y2)
-    x += random.randint(-8, 8)  # Slight offset
-    y += random.randint(-8, 8)
+    # Calculate rectangle dimensions
+    width = x2 - x1
+    height = y2 - y1
+    # Scale offset based on rectangle size; no offset for very small rectangles
+    if width < 10 or height < 10:
+        offset_x = 0
+        offset_y = 0
+    else:
+        max_offset = min(width, height) * 0.1  # Cap offset at 10% of smaller dimension
+        offset_x = random.randint(-int(max_offset), int(max_offset))
+        offset_y = random.randint(-int(max_offset), int(max_offset))
+    x += offset_x
+    y += offset_y
+    # Ensure click stays within rectangle bounds
+    x = max(x1, min(x, x2))
+    y = max(y1, min(y, y2))
     smooth_mouse_move(x, y, duration=random.uniform(0.4, 0.8))
     
     # Pre-click hesitation
