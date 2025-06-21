@@ -1,7 +1,6 @@
 kolabnow.com
 pressmail.ch
 barmail.ch
-swissgroupware.ch
 mykolab.com
 myswissmail.ch
 kolabnow.ch
