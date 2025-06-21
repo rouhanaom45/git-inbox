@@ -3,6 +3,7 @@ import time
 import random
 import subprocess
 import string
+import pyperclip
 
 time.sleep(3)
 def human_type(text, interval_range=(0.05, 0.15)):
@@ -84,7 +85,7 @@ if not domains:
 
 # Generate name and select random domain
 name = generate_patterned_name(length=6, with_digits=True)
-domain = random.choice(domains)
+domain = pyperclip.paste().strip()
 email = f"{name}@{domain}"
 human_type(email)
 time.sleep(1)
