@@ -7,7 +7,7 @@ scripts=(
   "proton1.py"
   "confirm0.py"
   "proton2.py"
-  "chrome-upload.py"
+  "upload1.py"
   "save.py"
   "github1.py"
   "github2.py"
