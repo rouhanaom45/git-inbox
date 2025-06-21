@@ -7,13 +7,13 @@ scripts=(
   "proton1.py"
   "confirm0.py"
   "proton2.py"
+  "chrome-upload.py"
   "save.py"
   "github1.py"
   "github2.py"
   "confirm.py"
   "repository.py"
   "upload.py"
-  "chrome-upload.py"
 )
 
 # Run each script in order
