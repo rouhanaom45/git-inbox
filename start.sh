@@ -3,6 +3,7 @@
 
 scripts=(
   "google.py"
+  "get-domain"
   "box1.py"
   "proton1.py"
   "confirm0.py"
